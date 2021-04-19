@@ -1,5 +1,9 @@
 # Game of Pods by KodeKloud
 
+**Link to game**: https://kodekloud.com/p/game-of-pods\
+**Author**: Vijin Palazhi
+
+
 ## Level passwords
 - **Bravo**: `Nyk skan jiva schedulara! Zer poda! Zer poda! Zer poda!`
 - **Pento**: `Aksios Podo, ilon misas! Kesrio syt logis zobrie issa se ossyngnoti errars`
