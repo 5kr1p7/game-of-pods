@@ -1,6 +1,7 @@
 # Game of Pods by KodeKloud
 
-**Link to game**: https://kodekloud.com/p/game-of-pods \\
+**Link to game**: https://kodekloud.com/p/game-of-pods
+
 **Author**: Vijin Palazhi
 
 
