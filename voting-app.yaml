@@ -1,0 +1,190 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vote
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-deployment
+  namespace: vote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vote
+  template:
+    metadata:
+      labels:
+        app: vote
+      namespace: vote
+    spec:
+      containers:
+      - name: vote
+        image: kodekloud/examplevotingapp_vote:before
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote-service
+  namespace: vote
+spec:
+  type: NodePort
+  selector:
+    app: vote
+  ports:
+    - name: http
+      targetPort: 80
+      port: 5000
+      nodePort: 31000
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  namespace: vote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+      namespace: vote
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: vote
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      targetPort: 6379
+      port: 6379
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: vote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker-app
+  template:
+    metadata:
+      labels:
+        app: worker-app
+      namespace: vote
+    spec:
+      containers:
+      - name: worker-app
+        image: kodekloud/examplevotingapp_worker
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: vote
+spec:
+  type: ClusterIP
+  selector:
+    name: db-deployment
+  ports:
+    - name: postgre
+      targetPort: 5432
+      port: 5432
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  namespace: vote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgre
+  template:
+    metadata:
+      labels:
+        app: postgre
+      namespace: vote
+    spec:
+      containers:
+      - name: db
+        image: postgres:9.4
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "password"
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
+        ports:
+        - containerPort: 5432
+      volumes:
+      - name: db-data
+        emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-deployment
+  namespace: vote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result
+  template:
+    metadata:
+      labels:
+        app: result
+      namespace: vote
+    spec:
+      containers:
+      - name: votingapp-result
+        image: kodekloud/examplevotingapp_result:before
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-service
+  namespace: vote
+spec:
+  type: NodePort
+  selector:
+    app: result
+  ports:
+    - name: http
+      targetPort: 80
+      port: 5001
+      nodePort: 31001
+      protocol: TCP
+---
