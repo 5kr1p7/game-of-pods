@@ -1,4 +1,7 @@
 # Game of Pods by KodeKloud
+<p align="center">
+  <img src="GOP_Map.jpg" />
+</p>
 
 **Link to game**: https://kodekloud.com/p/game-of-pods
 
